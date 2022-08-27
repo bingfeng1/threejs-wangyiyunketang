@@ -1,0 +1,26 @@
+{
+  "name": "threejslesson",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.0.9",
+    "element-plus": "^2.2.15",
+    "pinia": "^2.0.21",
+    "three": "^0.143.0",
+    "vue": "^3.2.37",
+    "vue-router": "4"
+  },
+  "devDependencies": {
+    "@types/node": "^18.7.13",
+    "@types/three": "^0.143.1",
+    "@vitejs/plugin-vue": "^3.0.3",
+    "sass": "^1.54.5",
+    "vite": "^3.0.7"
+  }
+}
