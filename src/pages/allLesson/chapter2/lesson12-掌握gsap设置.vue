@@ -1,12 +1,14 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import BaseCanvas from '../../../components/BaseCanvas.vue';
-import { AxesHelper, BoxGeometry, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
+import { AxesHelper, BoxGeometry, Clock, Mesh, MeshBasicMaterial, PerspectiveCamera, Scene, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { gsap } from "gsap";
 
 
 const base = ref()
 
+// 掌握gsap动画设置
 onMounted(() => {
     const { canvas, width, height } = base.value
     // console.log(canvas);
@@ -45,12 +47,16 @@ onMounted(() => {
     const axesHelper = new AxesHelper(5)
     scene.add(axesHelper)
 
-    // controls.update()
+    // 设置时钟
+    const clock = new Clock()
+
+    // 设置动画
+    gsap.to(cube.position, { x: 5, duration: 5 })
+    gsap.to(cube.rotation, { x: 2 * Math.PI, duration: 5 })
+
     function animate() {
-        cube.position.x += .01
-        if (cube.position.x > 5) {
-            cube.position.x = 0
-        }
+
+
         renderer.render(scene, camera)
         requestAnimationFrame(animate)
     }

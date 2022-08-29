@@ -6,6 +6,7 @@ specifiers:
   '@types/three': ^0.143.1
   '@vitejs/plugin-vue': ^3.0.3
   element-plus: ^2.2.15
+  gsap: ^3.11.0
   pinia: ^2.0.21
   sass: ^1.54.5
   three: ^0.143.0
@@ -16,6 +17,7 @@ specifiers:
 dependencies:
   '@element-plus/icons-vue': 2.0.9_vue@3.2.37
   element-plus: 2.2.15_vue@3.2.37
+  gsap: 3.11.0
   pinia: 2.0.21_vue@3.2.37
   three: 0.143.0
   vue: 3.2.37
@@ -542,6 +544,10 @@ packages:
     dependencies:
       is-glob: 4.0.3
     dev: true
+
+  /gsap/3.11.0:
+    resolution: {integrity: sha512-TV5aFGqXht+0o/CelnhCikSe3QGeG+q1XA/fyFFsMzesILHgWgFWIz0NuXIgcMaL5h7MG2l+j0BTupS5YyYkrw==}
+    dev: false
 
   /has/1.0.3:
     resolution: {integrity: sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==}
