@@ -12,7 +12,7 @@ onMounted(() => {
     let _canvas = canvas.value;
     let parent = _canvas.parentElement
     width.value = parent.clientWidth 
-    height.value = parent.clientHeight 
+    height.value = parent.clientHeight - 4 
     _canvas.width = width.value
     _canvas.height = height.value
 })

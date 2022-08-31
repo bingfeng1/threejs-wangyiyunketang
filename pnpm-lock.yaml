@@ -19,7 +19,6 @@ dependencies:
   '@element-plus/icons-vue': 2.0.9_vue@3.2.37
   dat.gui: registry.npmmirror.com/dat.gui/0.7.9
   element-plus: 2.2.15_vue@3.2.37
-  gsap: registry.npmmirror.com/gsap/3.11.0
   pinia: 2.0.21_vue@3.2.37
   three: 0.143.0
   vue: 3.2.37
@@ -345,6 +344,10 @@ packages:
     dependencies:
       is-glob: 4.0.3
     dev: true
+
+  /gsap/3.11.0:
+    resolution: {integrity: sha512-TV5aFGqXht+0o/CelnhCikSe3QGeG+q1XA/fyFFsMzesILHgWgFWIz0NuXIgcMaL5h7MG2l+j0BTupS5YyYkrw==}
+    dev: false
 
   /has/1.0.3:
     resolution: {integrity: sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==}
