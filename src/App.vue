@@ -8,7 +8,7 @@ import { _routes } from './routes';
 <template>
   <el-container class="container">
     <el-aside width="200px" class="aside">
-      <el-scrollbar>
+      <el-scrollbar height="100vh">
         <el-menu default-active="2" class="el-menu-vertical-demo" :router="true">
           <template v-for="route in _routes" :key="route.path">
             <el-sub-menu :index="route.path">
