@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 import BaseCanvas from '../../../components/BaseCanvas.vue';
-import { AmbientLight, AxesHelper, BoxBufferGeometry, BoxGeometry, BufferAttribute, BufferGeometry, Color, DirectionalLight, DoubleSide, Mesh, MeshBasicMaterial, MeshStandardMaterial, MirroredRepeatWrapping, NearestFilter, PerspectiveCamera, PlaneBufferGeometry, RepeatWrapping, Scene, TextureLoader, WebGLRenderer } from 'three'
+import { AmbientLight, AxesHelper, BoxBufferGeometry, BoxGeometry, BufferAttribute, BufferGeometry, Color, DirectionalLight, DoubleSide, LoadingManager, Mesh, MeshBasicMaterial, MeshStandardMaterial, MirroredRepeatWrapping, NearestFilter, PerspectiveCamera, PlaneBufferGeometry, RepeatWrapping, Scene, TextureLoader, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GUI } from 'dat.gui'
 import { gsap } from "gsap";
@@ -9,7 +9,7 @@ import { gsap } from "gsap";
 const base = ref()
 // const gui = new GUI()
 
-// 法线贴图
+// 纹理加载进度
 
 onMounted(() => {
     const { canvas, width, height } = base.value
@@ -25,10 +25,40 @@ onMounted(() => {
 
     scene.add(camera)
 
-    // 导入纹理
-    const textureLoader = new TextureLoader()
 
-    const doorColorTexture = textureLoader.load("/textures/door/color.jpg")
+
+    let event = {
+        onLoad: () => {
+            console.log("图片加载完成");
+        },
+        onProgress: (url, num, total) => {
+            console.log(url);
+            console.log("图片加载进度");
+            console.log("加载进度百分比", ((num / total) * 100).toFixed(2) + "%")
+        },
+        onError: (e) => {
+            console.log("图片加载错误", e);
+        },
+    }
+
+
+    // 设置加载管理器
+    const loadingManager = new LoadingManager(
+        event.onLoad,
+        event.onProgress,
+        event.onError
+    )
+
+    // 导入纹理
+    const textureLoader = new TextureLoader(loadingManager)
+
+    // 单张纹理图的加载进度
+    const doorColorTexture = textureLoader.load("/textures/door/color.jpg",
+        // event.onLoad,
+        // event.onProgress,
+        // event.onError
+    )
+
     const doorAlphaTexture = textureLoader.load("/textures/door/alpha.jpg")
     const doorAoTexture = textureLoader.load("/textures/door/ambientOcclusion.jpg")
     // 导入置换贴图
