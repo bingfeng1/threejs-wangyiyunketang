@@ -28,7 +28,7 @@ onMounted(() => {
     const camera = new PerspectiveCamera(75, width / height, .1, 1000)
 
     // 设置相机位置
-    camera.position.set(0, 0, 8)
+    camera.position.set(0, 0, 10)
 
     scene.add(camera)
 
@@ -69,6 +69,8 @@ onMounted(() => {
     // 聚光灯角度
     spotLight.angle = Math.PI / 6
     spotLight.distance = 0
+    spotLight.penumbra = 0
+    spotLight.decay = 0
 
     // 设置透视相机可视区域
 
@@ -85,6 +87,14 @@ onMounted(() => {
         .min(0)
         .max(10)
         .step(.1)
+    gui.add(spotLight, 'penumbra')
+        .min(0)
+        .max(1)
+        .step(.01)
+    gui.add(spotLight, 'decay')
+        .min(0)
+        .max(5)
+        .step(.01)
 
 
     // 初始化渲染器
@@ -96,6 +106,7 @@ onMounted(() => {
     renderer.shadowMap.enabled = true
     renderer.setSize(width, height)
     renderer.render(scene, camera)
+    renderer.physicallyCorrectLights = true
 
     // 创建轨道控制器
     const controls = new OrbitControls(camera, canvas)
