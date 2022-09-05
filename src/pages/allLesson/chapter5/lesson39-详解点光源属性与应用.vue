@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, onUnmounted, ref } from 'vue';
 import BaseCanvas from '../../../components/BaseCanvas.vue';
-import { AmbientLight, AxesHelper, BoxBufferGeometry, BoxGeometry, BufferAttribute, BufferGeometry, Color, CubeTextureLoader, DirectionalLight, DoubleSide, EquirectangularReflectionMapping, LoadingManager, Mesh, MeshBasicMaterial, MeshStandardMaterial, MirroredRepeatWrapping, NearestFilter, PerspectiveCamera, PlaneBufferGeometry, RepeatWrapping, Scene, SphereBufferGeometry, SphereGeometry, SpotLight, TextureLoader, WebGLRenderer } from 'three'
+import { AmbientLight, AxesHelper, BoxBufferGeometry, BoxGeometry, BufferAttribute, BufferGeometry, Clock, Color, CubeTextureLoader, DirectionalLight, DoubleSide, EquirectangularReflectionMapping, LoadingManager, Mesh, MeshBasicMaterial, MeshStandardMaterial, MirroredRepeatWrapping, NearestFilter, PerspectiveCamera, PlaneBufferGeometry, PointLight, RepeatWrapping, Scene, SphereBufferGeometry, SphereGeometry, SpotLight, TextureLoader, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GUI } from 'dat.gui'
 import { gsap } from "gsap";
@@ -10,12 +10,7 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader'
 const base = ref()
 const gui = new GUI()
 
-// 目标：聚光灯
-// 1、材质要满足足够的对光照反应
-// 2、设置渲染器开始阴影的计算：renderer.shadowMap.enabled = true;
-// 3、设置关照投射阴影directionalLight.castShadow = true
-// 4、设置物体投射阴影sphere.castShadow = true
-// 5、设置物体接受阴影plane.receiveShadow = true
+// 目标：点光源
 
 onMounted(() => {
     const { canvas, width, height } = base.value
@@ -55,44 +50,43 @@ onMounted(() => {
     // 环境光
     const light = new AmbientLight(0xffffff, .5)
     scene.add(light)
+
+    const smallBall = new Mesh(
+        new SphereBufferGeometry(0.1, 20, 20),
+        new MeshBasicMaterial({ color: 0xff0000 })
+    )
+
+    smallBall.position.set(2, 2, 2)
+
+
     // 直线光
-    const spotLight = new SpotLight(0xffffff, .5)
-    spotLight.position.set(5, 5, 5)
-    spotLight.castShadow = true
-    spotLight.intensity = 2
+    const pointLight = new PointLight(0xff0000, 1)
+    pointLight.castShadow = true
+
 
     // 模糊度
-    spotLight.shadow.radius = 20
+    pointLight.shadow.radius = 20
     // 阴影贴图分辨率
-    spotLight.shadow.mapSize.set(512, 512)
+    pointLight.shadow.mapSize.set(256, 256)
 
-    spotLight.target = sphere
-    // 聚光灯角度
-    spotLight.angle = Math.PI / 6
-    spotLight.distance = 0
-    spotLight.penumbra = 0
-    spotLight.decay = 2
+    pointLight.distance = 0
+    pointLight.decay = 2
 
     // 设置透视相机可视区域
 
-    scene.add(spotLight)
+    smallBall.add(pointLight)
+    scene.add(smallBall)
 
     gui.add(sphere.position, "x")
         .min(-5)
         .max(5)
         .step(.1)
 
-    gui.add(spotLight, 'angle').min(0).max(Math.PI / 2).step(.01)
-
-    gui.add(spotLight, 'distance')
+    gui.add(pointLight, 'distance')
         .min(0)
         .max(10)
-        .step(.1)
-    gui.add(spotLight, 'penumbra')
-        .min(0)
-        .max(1)
-        .step(.01)
-    gui.add(spotLight, 'decay')
+        .step(.001)
+    gui.add(pointLight, 'decay')
         .min(0)
         .max(5)
         .step(.01)
@@ -117,8 +111,15 @@ onMounted(() => {
     const axesHelper = new AxesHelper(5)
     scene.add(axesHelper)
 
+    const clock = new Clock()
+
     // controls.update()
     function animate() {
+        let time = clock.getElapsedTime()
+        smallBall.position.x = Math.sin(time) * 3
+        smallBall.position.z = Math.cos(time) * 3
+        // smallBall.position.y = 2 + Math.sin(time)
+
         controls.update()
         renderer.render(scene, camera)
         requestAnimationFrame(animate)
@@ -133,9 +134,9 @@ onUnmounted(() => {
 })
 </script>
         
-        <template>
+<template>
     <BaseCanvas ref="base"></BaseCanvas>
 </template>
         
-        <style scoped>
-        </style>
+<style scoped>
+</style>

@@ -15,7 +15,10 @@ import { _routes } from './routes';
               <template #title>
                 <span>{{ route.name }}</span>
               </template>
-              <el-menu-item v-for="({ path2, name }) in route.children" :index="path2">{{ name }}
+              <el-menu-item v-for="({ path2, name }) in route.children" :index="path2">
+                <el-tooltip class="box-item" effect="dark" :content="name" placement="top-start">
+                {{ name }}
+                </el-tooltip>
               </el-menu-item>
             </el-sub-menu>
           </template>
