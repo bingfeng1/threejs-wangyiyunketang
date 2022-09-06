@@ -34,13 +34,17 @@ onMounted(() => {
         size: 0.1,
         radius: 5,
         branch: 6,
-        color: "#ffffff",
-        rotateScale: .5
+        color: "#ff6030",
+        rotateScale: .5,
+        endColor: '#113984'
     }
 
     let geometry;
     let material;
     let points;
+
+    const centerColor = new Color(params.color)
+    const endColor = new Color(params.endColor)
     const generateGalaxy = () => {
         // 生成顶点
         geometry = new BufferGeometry()
@@ -67,15 +71,25 @@ onMounted(() => {
             positions[current + 1] = 0 + randomY
             positions[current + 2] = Math.sin(branchAngle + distance * params.rotateScale) * distance + randomZ
 
+            // 混合颜色，形成渐变色
+            const mixColor = centerColor.clone()
+            mixColor.lerp(endColor, distance / params.radius)
+
+            colors[current] = mixColor.r
+            colors[current + 1] = mixColor.g
+            colors[current + 2] = mixColor.b
         }
 
         geometry.setAttribute("position",
             new BufferAttribute(positions, 3)
         )
+        geometry.setAttribute("color",
+            new BufferAttribute(colors, 3)
+        )
 
         // 设置点材质
         material = new PointsMaterial({
-            color: new Color(params.color),
+            // color: new Color(params.color),
             size: params.size,
             sizeAttenuation: true,
             depthWrite: false,
@@ -83,7 +97,7 @@ onMounted(() => {
             map: particlesTexture,
             alphaMap: particlesTexture,
             transparent: true,
-            // vertexColors: true
+            vertexColors: true
 
         })
 

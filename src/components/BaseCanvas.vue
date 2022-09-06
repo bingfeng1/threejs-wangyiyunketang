@@ -1,3 +1,9 @@
+<script>
+export default {
+    inheritAttrs: false
+}
+</script>
+
 <script setup>
 import { onMounted, ref } from 'vue';
 
@@ -35,11 +41,12 @@ defineExpose({
 <style scoped>
 canvas {
     background: rgb(221, 221, 221);
-    width: 100%;
-    height: 100%;
+    /* width: 100%; */
+    /* height: 100%; */
 }
 
 #clear {
-    position: fixed;
+    position: absolute;
+    top: 0;
 }
 </style>
