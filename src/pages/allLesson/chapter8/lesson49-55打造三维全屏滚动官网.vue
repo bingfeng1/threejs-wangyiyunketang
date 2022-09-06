@@ -50,7 +50,7 @@ onMounted(() => {
             for (let j = 0; j < 5; j++) {
                 for (let z = 0; z < 5; z++) {
                     const cube = new Mesh(cubeGeometry, material)
-                    cube.position.set(i * 2 - 5, j * 2 - 5, z * 2 - 5)
+                    cube.position.set(i * 2 - 4, j * 2 - 4, z * 2 - 4)
                     cubeGroup.add(cube)
                     cubeArr.push(cube)
                 }
@@ -64,16 +64,6 @@ onMounted(() => {
         const raycaster = new Raycaster()
 
         // 监听鼠标的位置
-        // addMouseMoveFn('mousemove', 'getRaycaster', (x, y) => {
-        //     const mouse = new Vector2()
-        //     mouse.x = x
-        //     mouse.y = y
-        //     raycaster.setFromCamera(mouse, camera)
-        //     let result = raycaster.intersectObjects(cubeArr)
-        //     if (result) {
-        //         result.forEach((v) => v.object.material = redMaterial)
-        //     }
-        // })
         addDomEventFn('click', 'getRaycaster', (x, y) => {
             const mouse = new Vector2()
             mouse.x = x
@@ -96,7 +86,7 @@ onMounted(() => {
         })
     }
 
-    let sjxMesh
+    let sjxGroup = new Group()
     // 三角形
     {
         // 创建物体
@@ -107,22 +97,89 @@ onMounted(() => {
             const positionArray = new Float32Array(9)
             for (let j = 0; j < 9; j++) {
                 if (j % 3 === 1) {
-                    positionArray[j] = (Math.random() - 7) * 5
+                    positionArray[j] = (Math.random() - .5) * 5
                 } else {
                     positionArray[j] = (Math.random() - .5) * 5
                 }
             }
 
             let color = new Color(Math.random(), Math.random(), Math.random())
-            const material = new MeshBasicMaterial({ color, transparent: true, opacity: .8 })
+            const material = new MeshBasicMaterial({
+                color,
+                transparent: true,
+                opacity: .5,
+                side: DoubleSide
+            })
             // 根据几何体和材质创建模型
 
 
             geometry.setAttribute("position", new BufferAttribute(positionArray, 3))
-            sjxMesh = new Mesh(geometry, material)
-            scene.add(sjxMesh)
-        }
+            let mesh = new Mesh(geometry, material)
 
+            sjxGroup.add(mesh)
+        }
+        sjxGroup.position.set(0, -30, 0)
+
+        scene.add(sjxGroup)
+    }
+
+    // 弹跳小球
+    const sphereGroup = new Group()
+    let smallBall
+    {
+
+        const sphereGeometry = new SphereBufferGeometry(1, 20, 20)
+        const sphereMaterial = new MeshStandardMaterial({
+
+        })
+
+        const sphere = new Mesh(sphereGeometry, sphereMaterial)
+        sphere.castShadow = true
+        sphereGroup.add(sphere)
+
+
+        const planeGeometry = new PlaneBufferGeometry(50, 50)
+
+        const plane = new Mesh(planeGeometry, sphereMaterial)
+        plane.position.set(0, -1, 0)
+        plane.rotation.x = -Math.PI / 2
+        plane.receiveShadow = true
+        sphereGroup.add(plane)
+
+
+        // 灯光
+        // 环境光
+        const light = new AmbientLight(0xffffff, .5)
+        sphereGroup.add(light)
+
+        smallBall = new Mesh(
+            new SphereBufferGeometry(0.1, 20, 20),
+            new MeshBasicMaterial({ color: 0xff0000 })
+        )
+
+        smallBall.position.set(2, 2, 2)
+
+
+        // 直线光
+        const pointLight = new PointLight(0xff0000, 1)
+        pointLight.castShadow = true
+
+
+        // 模糊度
+        pointLight.shadow.radius = 20
+        // 阴影贴图分辨率
+        pointLight.shadow.mapSize.set(256, 256)
+
+        pointLight.distance = 0
+        pointLight.decay = 0
+
+        // 设置透视相机可视区域
+
+        smallBall.add(pointLight)
+        sphereGroup.add(smallBall)
+
+        sphereGroup.position.set(0, -60, 0)
+        scene.add(sphereGroup)
     }
 
     // 初始化渲染器
@@ -151,11 +208,23 @@ onMounted(() => {
 
     const mainDom = main.value
     // controls.update()
+    gsap.to(cubeGroup.rotation, {
+        x: "+=" + Math.PI,
+        duration: 5,
+        repeat: -1
+    })
     function animate() {
         let time = clock.getElapsedTime()
 
-        cubeGroup.rotation.x = time * .5
-        cubeGroup.rotation.y = time * .5
+        // cubeGroup.rotation.x = time * .5
+        // cubeGroup.rotation.y = time * .5
+
+        // sjxGroup.rotation.x = time * .4
+        // sjxGroup.rotation.z = time * .3
+
+        // smallBall.position.x = Math.sin(time) * 3
+        // smallBall.position.z = Math.cos(time) * 3
+        // smallBall.position.y = 2 + Math.sin(time)
 
         // 根据当前滚动的scrolly，去设置相机移动的位置
         camera.position.y = -(mainDom.scrollTop / mainDom.clientHeight) * 30
@@ -166,20 +235,24 @@ onMounted(() => {
 
     animate()
 
-    let currentPage = 0
-    let scrollYLength = 0
-    // mainDom.addEventListener('mousewheel', (event) => {
-    //     scrollYLength += event.deltaY
-    //     mainDom.scrollTo({
-    //         top:scrollYLength,
-    //         behavior:'smooth'
-    //     })
-    //     const newPage = Math.round(mainDom.scrollTop / mainDom.clientHeight)
-    //     if (newPage != currentPage) {
-    //         currentPage = newPage
-    //         console.log("改变页面，当前是：" + currentPage);
-    //     }
-    // })
+    {
+        let arrGroup = [cubeGroup, sjxGroup, sphereGroup]
+        let currentPage = 0
+        mainDom.addEventListener('scroll', () => {
+            const newPage = Math.round(mainDom.scrollTop / mainDom.clientHeight)
+            if (newPage != currentPage) {
+                currentPage = newPage
+                console.log("改变页面，当前是：" + currentPage);
+
+                gsap.to(arrGroup[currentPage].rotation, {
+                    z: "+=" + Math.PI * 2,
+                    duration: 1,
+                })
+            }
+        })
+    }
+
+
 })
 
 onUnmounted(() => {
@@ -190,9 +263,10 @@ onUnmounted(() => {
 <template>
 
     <section class="main" ref="main">
-        <BaseCanvas style="background-color: transparent;height:calc(100vh - 40px);position: sticky;top: 20px;bottom:20px;"
-            ref="base">
-        </BaseCanvas>
+        <div class="canvas">
+            <BaseCanvas style="background-color: transparent;" ref="base">
+            </BaseCanvas>
+        </div>
         <div class="page page1">
             <h1>投射光线</h1>
             <h3>实现3D交互</h3>
@@ -205,7 +279,6 @@ onUnmounted(() => {
             <h1>SpotLight</h1>
             <h3>目标：点光源</h3>
         </div>
-
     </section>
 </template>
             
@@ -215,7 +288,7 @@ section.main {
     color: white;
     position: relative;
     height: calc(100vh - 40px);
-    overflow-y: visible;
+    overflow-y: auto;
 
     .page {
         height: 100vh;
@@ -231,6 +304,14 @@ section.main {
         h3 {
             font-size: 30px;
         }
+    }
+
+    .canvas {
+        height: calc(100vh - 40px);
+        position: sticky;
+        // position: -webkit-sticky;
+        top: 0;
+        margin-bottom: calc(-100vh - 80px);
     }
 }
 </style>
