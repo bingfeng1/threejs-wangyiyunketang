@@ -6,16 +6,20 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { GUI } from 'dat.gui'
 import { gsap } from "gsap";
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader'
-import { useDomEvent } from 'utils/useDomEvent'
+import { useCanvasEvent } from 'utils/useCanvasEvent'
 
 const base = ref()
 const gui = new GUI()
+
+onUnmounted(() => {
+    gui.destroy()
+})
 
 const main = ref()
 
 onMounted(() => {
     const { canvas, width, height } = base.value
-    const { addDomEventFn } = useDomEvent(base.value.canvas)
+    const { addCanvasEventFn } = useCanvasEvent(base.value.canvas)
 
 
     // console.log(canvas);
@@ -64,7 +68,7 @@ onMounted(() => {
         const raycaster = new Raycaster()
 
         // 监听鼠标的位置
-        addDomEventFn('click', 'getRaycaster', (x, y) => {
+        addCanvasEventFn('click', 'getRaycaster', (x, y) => {
             const mouse = new Vector2()
             mouse.x = x
             mouse.y = y
@@ -74,7 +78,7 @@ onMounted(() => {
                 result.forEach((v) => v.object.material = redMaterial)
             }
         })
-        addDomEventFn('click', 'log', (x, y) => {
+        addCanvasEventFn('click', 'log', (x, y) => {
             const mouse = new Vector2()
             mouse.x = x
             mouse.y = y
@@ -161,7 +165,7 @@ onMounted(() => {
 
 
         // 直线光
-        const pointLight = new PointLight(0xff0000, 1)
+        const pointLight = new PointLight(0xff0000, 2)
         pointLight.castShadow = true
 
 
@@ -209,12 +213,42 @@ onMounted(() => {
     const mainDom = main.value
     // controls.update()
     gsap.to(cubeGroup.rotation, {
-        x: "+=" + Math.PI,
+        x: "+=" + Math.PI * 2,
+        y: "+=" + Math.PI * 2,
         duration: 5,
-        repeat: -1
+        repeat: -1,
+        ease: "power2.inOut"
     })
+
+    gsap.to(sjxGroup.rotation, {
+        x: "+=" + Math.PI * 2,
+        y: "+=" + Math.PI * 2,
+        duration: 5,
+        repeat: -1,
+        ease: "power2.inOut"
+    })
+
+    gsap.to(smallBall.position, {
+        x: -3,
+        z: 2,
+        duration: 5,
+        repeat: -1,
+        ease: "power2.inOut",
+        yoyo: true
+    })
+    gsap.to(smallBall.position, {
+        y: 0,
+        duration: .5,
+        repeat: -1,
+        ease: "power2.inOut",
+        yoyo: true
+    })
+
+
+    const mouse = new Vector2()
     function animate() {
         let time = clock.getElapsedTime()
+        let deltaTime = clock.getDelta()
 
         // cubeGroup.rotation.x = time * .5
         // cubeGroup.rotation.y = time * .5
@@ -225,6 +259,8 @@ onMounted(() => {
         // smallBall.position.x = Math.sin(time) * 3
         // smallBall.position.z = Math.cos(time) * 3
         // smallBall.position.y = 2 + Math.sin(time)
+
+        camera.position.x += (mouse.x * 5 - camera.position.x)
 
         // 根据当前滚动的scrolly，去设置相机移动的位置
         camera.position.y = -(mainDom.scrollTop / mainDom.clientHeight) * 30
@@ -238,7 +274,8 @@ onMounted(() => {
     {
         let arrGroup = [cubeGroup, sjxGroup, sphereGroup]
         let currentPage = 0
-        mainDom.addEventListener('scroll', () => {
+
+        function handleScroll() {
             const newPage = Math.round(mainDom.scrollTop / mainDom.clientHeight)
             if (newPage != currentPage) {
                 currentPage = newPage
@@ -248,16 +285,39 @@ onMounted(() => {
                     z: "+=" + Math.PI * 2,
                     duration: 1,
                 })
+
+                // gsap.to(`.page${currentPage + 1} h1`, {
+                //     rotate: "+=" + 360,
+                //     duration: 2
+                // })
+                gsap.fromTo(`.page${currentPage + 1} h1`,
+                    {
+                        x: -300
+                    },
+                    {
+                        x: 0,
+                        rotate: "+=" + 360,
+                        duration: 2
+                    })
             }
+        }
+        mainDom.addEventListener('scroll', handleScroll)
+        onMounted(() => {
+            mainDom.removeEventListener('scroll', handleScroll)
+        })
+
+    }
+
+    {
+        // 鼠标摇晃相机
+        addCanvasEventFn("mousemove", 'moveCamera', (x, y) => {
+            mouse.x = x
+            mouse.y = y
         })
     }
 
-
 })
 
-onUnmounted(() => {
-    gui.destroy()
-})
 </script>
             
 <template>
@@ -290,6 +350,10 @@ section.main {
     height: calc(100vh - 40px);
     overflow-y: auto;
 
+    ::-webkit-scrollbar {
+        display: none;
+    }
+
     .page {
         height: 100vh;
         display: flex;
@@ -311,7 +375,7 @@ section.main {
         position: sticky;
         // position: -webkit-sticky;
         top: 0;
-        margin-bottom: calc(-100vh - 80px);
+        margin-bottom: calc(-80vh - 200px);
     }
 }
 </style>

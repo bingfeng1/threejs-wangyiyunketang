@@ -7,10 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "docs":"cd C:\\Users\\user\\Documents\\learn\\threejs\\three.js && npm run dev"
+    "docs": "cd C:\\Users\\user\\Documents\\learn\\threejs\\three.js && npm run dev"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.0.9",
+    "cannon-es": "^0.20.0",
     "dat.gui": "^0.7.9",
     "element-plus": "^2.2.15",
     "gsap": "^3.11.0",

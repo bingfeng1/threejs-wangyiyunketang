@@ -7,14 +7,14 @@ import { GUI } from 'dat.gui'
 import { gsap } from "gsap";
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader'
 
-import { useDomEvent } from 'utils/useDomEvent'
+import { useCanvasEvent } from 'utils/useCanvasEvent'
 
 const base = ref()
 const gui = new GUI()
 
 onMounted(() => {
     const { canvas, width, height } = base.value
-    const { addDomEventFn } = useDomEvent(base.value.canvas)
+    const { addCanvasEventFn } = useCanvasEvent(base.value.canvas)
 
 
     // console.log(canvas);
@@ -58,7 +58,7 @@ onMounted(() => {
     const raycaster = new Raycaster()
 
     // 监听鼠标的位置
-    // addDomEventFn('mousemove', 'getRaycaster', (x, y) => {
+    // addCanvasEventFn('mousemove', 'getRaycaster', (x, y) => {
     //     const mouse = new Vector2()
     //     mouse.x = x
     //     mouse.y = y
@@ -68,7 +68,7 @@ onMounted(() => {
     //         result.forEach((v) => v.object.material = redMaterial)
     //     }
     // })
-    addDomEventFn('click', 'getRaycaster', (x, y) => {
+    addCanvasEventFn('click', 'getRaycaster', (x, y) => {
         const mouse = new Vector2()
         mouse.x = x
         mouse.y = y
@@ -78,7 +78,7 @@ onMounted(() => {
             result.forEach((v) => v.object.material = redMaterial)
         }
     })
-    addDomEventFn('click', 'log', (x, y) => {
+    addCanvasEventFn('click', 'log', (x, y) => {
         const mouse = new Vector2()
         mouse.x = x
         mouse.y = y

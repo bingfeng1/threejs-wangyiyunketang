@@ -5,6 +5,7 @@ specifiers:
   '@types/node': ^18.7.13
   '@types/three': ^0.143.1
   '@vitejs/plugin-vue': ^3.0.3
+  cannon-es: ^0.20.0
   dat.gui: ^0.7.9
   element-plus: ^2.2.15
   gsap: ^3.11.0
@@ -17,6 +18,7 @@ specifiers:
 
 dependencies:
   '@element-plus/icons-vue': 2.0.9_vue@3.2.37
+  cannon-es: 0.20.0
   dat.gui: registry.npmmirror.com/dat.gui/0.7.9
   element-plus: 2.2.15_vue@3.2.37
   gsap: 3.11.0
@@ -257,6 +259,10 @@ packages:
     dependencies:
       fill-range: 7.0.1
     dev: true
+
+  /cannon-es/0.20.0:
+    resolution: {integrity: sha512-eZhWTZIkFOnMAJOgfXJa9+b3kVlvG+FX4mdkpePev/w/rP5V8NRquGyEozcjPfEoXUlb+p7d9SUcmDSn14prOA==}
+    dev: false
 
   /chokidar/3.5.3:
     resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}

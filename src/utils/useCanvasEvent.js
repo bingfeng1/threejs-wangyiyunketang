@@ -1,7 +1,7 @@
 import { ref, onUnmounted } from "vue"
 
 // 封装鼠标事件和方法
-class DomEventCollection {
+class CanvasEventCollection {
     constructor(canvas) {
         this.canvas = canvas
         this.callback = {}
@@ -17,7 +17,7 @@ class DomEventCollection {
     }
 
     // 添加鼠标事件
-    addDomEvent(name) {
+    addCanvasEvent(name) {
         let handleEvent = (event) => {
             this.setMouseSite(event)
             // 将当前的鼠标三维坐标传出
@@ -33,25 +33,25 @@ class DomEventCollection {
     }
 
     // 添加具体事件触发
-    addDomEventFn(name, key, fn) {
+    addCanvasEventFn(name, key, fn) {
         if (!this.callback[name]) {
             this.callback[name] = new Map()
-            this.addDomEvent(name)
+            this.addCanvasEvent(name)
         }
         this.callback[name].set(key, fn)
     }
 
     // 移除具体事件触发
-    removeDomEventFn(name, key) {
+    removeCanvasEventFn(name, key) {
         this.callback[name].delete(key)
     }
 }
 
-export function useDomEvent(canvas) {
-    let domEventCollection = new DomEventCollection(canvas)
+export function useCanvasEvent(canvas) {
+    let canvasEventCollection = new CanvasEventCollection(canvas)
 
     return {
-        addDomEventFn: domEventCollection.addDomEventFn.bind(domEventCollection),
-        removeDomEventFn: domEventCollection.removeDomEventFn.bind(domEventCollection)
+        addCanvasEventFn: canvasEventCollection.addCanvasEventFn.bind(canvasEventCollection),
+        removeCanvasEventFn: canvasEventCollection.removeCanvasEventFn.bind(canvasEventCollection)
     }
 }
