@@ -35,6 +35,25 @@ for (const [key, value] of Object.entries(modules)) {
     }
 }
 
+// 目录排序（给前端展示使用，不然顺序太乱了）
+_routes.sort((a, b) => {
+    let reg = /\d+/
+    let a_num = (a.name).match(reg)
+    let b_num = (b.name).match(reg)
+
+    return a_num - b_num
+})
+
+_routes.forEach(({ children }) => {
+    children.sort((a, b) => {
+        let reg = /\d+/
+        let a_num = (a.name).match(reg)
+        let b_num = (b.name).match(reg)
+
+        return a_num - b_num
+    })
+})
+
 // 路由配置，与menu共用
 const routes = [
     {

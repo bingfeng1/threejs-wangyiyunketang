@@ -62,25 +62,7 @@ onMounted(() => {
         // 将物体添加至物理世界
         world.addBody(cubeBody)
 
-        // 创建击打声音
-        const hitSound = new Audio("/metalHit.mp3")
-
-        // 添加监听碰撞事件
-        function HitEvent(e) {
-            // console.log(e);
-            // 获取碰撞的强度
-            const impactStrength = e.contact.getImpactVelocityAlongNormal()
-            console.log(impactStrength);
-            if (impactStrength > 1) {
-                hitSound.currentTime = 0
-                hitSound.volume = .01 * impactStrength
-                hitSound.play()
-            }
-        }
         cubeBody.addEventListener('collide', HitEvent)
-        onUnmounted(() => {
-            cubeBody.removeEventListener('collide', HitEvent)
-        })
 
         cubeArr.push({
             mesh: cube,
@@ -88,7 +70,31 @@ onMounted(() => {
         })
     }
 
+
+    // 创建击打声音
+    const hitSound = new Audio("/metalHit.mp3")
+
+    // 添加监听碰撞事件
+    function HitEvent(e) {
+        // console.log(e);
+        // 获取碰撞的强度
+        const impactStrength = e.contact.getImpactVelocityAlongNormal()
+        console.log(impactStrength);
+        if (impactStrength > 1) {
+            hitSound.currentTime = 0
+            hitSound.volume = .01 * impactStrength
+            hitSound.play()
+        }
+    }
+
     addCanvasEventFn("click", "addCube", createCube)
+
+    // 这里可以释放此碰撞事件
+    onUnmounted(() => {
+        for (let { body } of cubeArr) {
+            body.removeEventListener('collide', HitEvent)
+        }
+    })
 
     const floor = new Mesh(
         new PlaneBufferGeometry(20, 20),
