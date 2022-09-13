@@ -1,13 +1,13 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import BaseCanvas from '../../../components/BaseCanvas.vue';
-import { AxesHelper, BoxGeometry, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, RawShaderMaterial, Scene, ShaderMaterial, WebGLRenderer } from 'three'
+import { AxesHelper, BoxGeometry, Clock, DoubleSide, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, RawShaderMaterial, Scene, ShaderMaterial, TextureLoader, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 
 // 顶点着色器
-import basicVertexShader from './shader/raw/vertex.glsl?raw'
+import basicVertexShader from './shader/raw71/vertex.glsl?raw'
 // 片元着色器
-import basicFragmentShader from './shader/raw/fragment.glsl?raw'
+import basicFragmentShader from './shader/raw71/fragment.glsl?raw'
 
 const base = ref()
 
@@ -29,15 +29,28 @@ onMounted(() => {
     //     color: "#00ff00"
     // })
 
+    const textureLoader = new TextureLoader()
+    const texture = textureLoader.load("/texture/ca.jpeg")
+
+
     // 创建着色器材质
     const rawShaderMaterial = new RawShaderMaterial({
         vertexShader: basicVertexShader,
         fragmentShader: basicFragmentShader,
-        wireframe: true
+        // wireframe: true,
+        side: DoubleSide,
+        uniforms: {
+            uTime: {
+                value: 0
+            },
+            uTexture: {
+                value: texture
+            }
+        }
     })
 
     const floor = new Mesh(
-        new PlaneBufferGeometry(1, 1),
+        new PlaneBufferGeometry(1, 1, 64, 64),
         rawShaderMaterial
     )
 
@@ -57,7 +70,12 @@ onMounted(() => {
     renderer.setSize(width, height)
     renderer.render(scene, camera)
 
+    const clock = new Clock()
+
     function render() {
+        const elapsedTime = clock.getElapsedTime()
+
+        rawShaderMaterial.uniforms.uTime.value = elapsedTime
 
         controls.update()
         renderer.render(scene, camera)
