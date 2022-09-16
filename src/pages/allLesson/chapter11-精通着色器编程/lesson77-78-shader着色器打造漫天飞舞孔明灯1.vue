@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import BaseCanvas from '../../../components/BaseCanvas.vue';
 import { ACESFilmicToneMapping, AxesHelper, BoxGeometry, CineonToneMapping, Clock, DoubleSide, EquirectangularReflectionMapping, LinearToneMapping, Mesh, MeshBasicMaterial, PerspectiveCamera, PlaneBufferGeometry, RawShaderMaterial, ReinhardToneMapping, Scene, ShaderMaterial, sRGBEncoding, TextureLoader, WebGLRenderer } from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
@@ -125,6 +125,9 @@ onMounted(() => {
     }
     render()
 
+    onUnmounted(()=>{
+        renderer.dispose()
+    })
 })
 </script>
             
