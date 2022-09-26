@@ -9,7 +9,7 @@ import { _routes } from './routes';
   <el-container class="container">
     <el-aside width="200px" class="aside">
       <el-scrollbar height="100vh">
-        <el-menu default-active="2" class="el-menu-vertical-demo" :router="true">
+        <el-menu default-active="2" class="el-menu-vertical-demo" :router="true" :default-openeds="[_routes[0].path]">
           <template v-for="route in _routes" :key="route.path">
             <el-sub-menu :index="route.path">
               <template #title>

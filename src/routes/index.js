@@ -54,11 +54,13 @@ _routes.forEach(({ children }) => {
     })
 })
 
+_routes.reverse()
+
 // 路由配置，与menu共用
 const routes = [
     {
         path: '/',
-        redirect: _routes[0].children[0].path2
+        redirect: _routes[_routes.length - 1].children[0].path2
     },
     ..._routes
 ]
