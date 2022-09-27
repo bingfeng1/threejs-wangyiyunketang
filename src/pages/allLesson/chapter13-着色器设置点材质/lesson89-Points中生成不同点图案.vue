@@ -39,25 +39,27 @@ onMounted(() => {
     scene.add(camera)
 
     const textureLoader = new TextureLoader()
-    const particlesTexture = textureLoader.load("/textures/particles/1.png")
+    const texture = textureLoader.load("/textures/particles/10.png")
+    const texture1 = textureLoader.load("/textures/particles/8.png")
+    const texture2 = textureLoader.load("/textures/particles/9.png")
 
 
     const params = {
         count: 10000,
         size: 0.1,
-        radius: 5,
+        radius: 10,
         branch: 6,
         color: "#ff6030",
         rotateScale: .5,
-        endColor: '#113984'
+        outGalaxyColor: '#1b3984'
     }
 
     let geometry;
     let material;
     let points;
 
-    const centerColor = new Color(params.color)
-    const endColor = new Color(params.endColor)
+    const galaxyColor = new Color(params.color)
+    const outGalaxyColor = new Color(params.outGalaxyColor)
     const generateGalaxy = () => {
         // 如果已经村子这些点，那么先释放内存，再删除顶点数据
         if (points !== null) {
@@ -72,6 +74,12 @@ onMounted(() => {
         const positions = new Float32Array(params.count * 3)
         // 设置顶点颜色
         const colors = new Float32Array(params.count * 3)
+
+        // 大小
+        const scales = new Float32Array(params.count)
+
+        // 团的属性
+        const imgIndex = new Float32Array(params.count)
 
         // 循环生成点
         for (let i = 0; i < params.count; i++) {
@@ -92,12 +100,19 @@ onMounted(() => {
             positions[current + 2] = Math.sin(branchAngle + distance * params.rotateScale) * distance + randomZ
 
             // 混合颜色，形成渐变色
-            const mixColor = centerColor.clone()
-            mixColor.lerp(endColor, distance / params.radius)
+            const mixColor = galaxyColor.clone()
+            mixColor.lerp(outGalaxyColor, distance / params.radius)
 
             colors[current] = mixColor.r
             colors[current + 1] = mixColor.g
             colors[current + 2] = mixColor.b
+
+            // 顶点大小
+            scales[current] = Math.random()
+            // 根据索引设置不同的图案
+            imgIndex[current] = i % 3
+            // imgIndex[current + 1] = i % 3
+            // imgIndex[current + 2] = i % 3
         }
 
         geometry.setAttribute("position",
@@ -105,6 +120,12 @@ onMounted(() => {
         )
         geometry.setAttribute("color",
             new BufferAttribute(colors, 3)
+        )
+        geometry.setAttribute("aScale",
+            new BufferAttribute(scales, 1)
+        )
+        geometry.setAttribute("imgIndex",
+            new BufferAttribute(imgIndex, 1)
         )
 
         // // 设置点材质
@@ -132,6 +153,15 @@ onMounted(() => {
             uniforms: {
                 uTime: {
                     value: 0
+                },
+                uTexture: {
+                    value: texture
+                },
+                uTexture1: {
+                    value: texture1
+                },
+                uTexture2: {
+                    value: texture2
                 }
             }
         })
