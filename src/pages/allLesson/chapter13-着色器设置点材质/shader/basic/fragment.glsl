@@ -2,6 +2,7 @@ precision lowp float;
 
 varying vec2 vUv;
 varying float vImgIndex;
+varying vec3 vColor;
 
 uniform sampler2D uTexture;
 uniform sampler2D uTexture1;
@@ -23,6 +24,7 @@ void main() {
 
         textureColor = texture2D(uTexture2, gl_PointCoord);
     }
-    gl_FragColor = vec4(gl_PointCoord, 1.0, textureColor.r);
+    // gl_FragColor = vec4(gl_PointCoord, 1.0, textureColor.r);
+    gl_FragColor = vec4(vColor, textureColor.r);
 
 }

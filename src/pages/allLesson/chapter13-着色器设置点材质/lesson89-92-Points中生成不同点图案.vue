@@ -162,6 +162,9 @@ onMounted(() => {
                 },
                 uTexture2: {
                     value: texture2
+                },
+                uColor: {
+                    value: galaxyColor
                 }
             }
         })
@@ -196,7 +199,7 @@ onMounted(() => {
     function animate() {
         let time = clock.getElapsedTime()
 
-
+        material.uniforms.uTime.value = time
         controls.update()
         renderer.render(scene, camera)
         requestAnimationFrame(animate)
